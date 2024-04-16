@@ -2,6 +2,7 @@ package Agittex.StatClients.services.interfaces;
 
 import Agittex.StatClients.dto.ClientDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,5 +15,6 @@ public interface ClientService {
     ClientDto update (ClientDto client);
     void delete (Long id);
     String statistique (String profession);
-    void processFile(InputStream inputStream) throws IOException;
+
 }
+

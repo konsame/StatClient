@@ -4,18 +4,22 @@ import Agittex.StatClients.dto.ClientDto;
 import Agittex.StatClients.entities.Client;
 import Agittex.StatClients.repositories.ClientRepository;
 import Agittex.StatClients.services.interfaces.ClientService;
+
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class ClientServiceImpl implements ClientService {
 
@@ -24,6 +28,7 @@ public class ClientServiceImpl implements ClientService {
 
 
     public ClientDto create(ClientDto client){
+        System.out.println("Données a enregistrer : " + client);
         return toDto(clientRepository.save(toEntity(client)));
     }
 
@@ -57,36 +62,6 @@ public class ClientServiceImpl implements ClientService {
         }
         else {
             return "Il n'existe aucun client ayant la profession: " + profession ;
-        }
-    }
-
-
-    public void processFile(InputStream inputStream) throws IOException {
-        ClientDto clientDto = readFileContentFromInputStream(inputStream);
-        System.out.println("Contenu du fichier dto : " + clientDto);
-        create(clientDto);
-    }
-    private ClientDto readFileContentFromInputStream(InputStream inputStream) throws IOException {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            ClientDto clientDto = new ClientDto();
-            while ((line = br.readLine()) != null) {
-                System.out.println("Ligne lue du fichier : " + line);
-                String[] parts = line.split(",");
-                if (parts.length == 5) {
-                    String nom = parts[0].trim();
-                    String prenom = parts[1].trim();
-                    int age = Integer.parseInt(parts[2].trim());
-                    String profession = parts[3].trim();
-                    double salaire = Double.parseDouble(parts[4].trim());
-                    clientDto.setNom(nom);
-                    clientDto.setPrenom(prenom);
-                    clientDto.setAge(age);
-                    clientDto.setProfession(profession);
-                    clientDto.setSalaire(salaire);
-                }
-            }
-            return clientDto;
         }
     }
 

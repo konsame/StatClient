@@ -1,40 +1,30 @@
 package Agittex.StatClients.controllers;
 
 import Agittex.StatClients.dto.ClientDto;
+import Agittex.StatClients.services.implement.UploadServiceImpl;
 import Agittex.StatClients.services.interfaces.ClientService;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/client")
 public class ClientController {
 
     private final ClientService clientService;
+    private final UploadServiceImpl uploadService;
 
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-
-        if (file.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le fichier est vide.");
-        }
-        try {
-            InputStream inputStream = file.getInputStream();
-            clientService.processFile(inputStream);
-            return ResponseEntity.ok("succes");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue ");
-        }
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        uploadService.defineFile(file);
+        return ResponseEntity.ok("succes");
     }
 
     @GetMapping("/statistique")
@@ -48,7 +38,6 @@ public class ClientController {
         ClientDto clientToSave = clientService.create(client);
         return ResponseEntity.ok().body(clientToSave);
     }
-
 
     @GetMapping("/list")
     public ResponseEntity<List<ClientDto>> getClients(){
